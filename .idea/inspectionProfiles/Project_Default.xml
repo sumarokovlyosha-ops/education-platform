@@ -1,0 +1,59 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyPackageRequirementsInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredPackages">
+        <list>
+          <option value="argon2-cffi" />
+          <option value="argon2-cffi-bindings" />
+          <option value="bcrypt" />
+          <option value="certifi" />
+          <option value="cffi" />
+          <option value="cryptography" />
+          <option value="dnspython" />
+          <option value="email-validator" />
+          <option value="fastapi-cli" />
+          <option value="fastapi-cloud-cli" />
+          <option value="fastar" />
+          <option value="httpcore" />
+          <option value="httpx" />
+          <option value="itsdangerous" />
+          <option value="Jinja2" />
+          <option value="markdown-it-py" />
+          <option value="mdurl" />
+          <option value="passlib" />
+          <option value="pycparser" />
+          <option value="pydantic-extra-types" />
+          <option value="Pygments" />
+          <option value="PyJWT" />
+          <option value="python-multipart" />
+          <option value="rich" />
+          <option value="rich-toolkit" />
+          <option value="rignore" />
+          <option value="sentry-sdk" />
+          <option value="shellingham" />
+          <option value="typer" />
+          <option value="urllib3" />
+          <option value="aioredis" />
+          <option value="async-timeout" />
+          <option value="fastapi-cache2" />
+          <option value="hiredis" />
+          <option value="iniconfig" />
+          <option value="nodeenv" />
+          <option value="packaging" />
+          <option value="pendulum" />
+          <option value="pluggy" />
+          <option value="pyright" />
+          <option value="pytest" />
+          <option value="pytest-asyncio" />
+          <option value="pytest-dotenv" />
+          <option value="python-dateutil" />
+          <option value="redis" />
+          <option value="ruff" />
+          <option value="six" />
+          <option value="tzdata" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>
