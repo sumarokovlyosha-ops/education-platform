@@ -11,6 +11,7 @@ dependencies = [
     "fastapi",
     "uvicorn[standard]",
     "pydantic-settings",
+    "pwdlib[argon2]",
     "sqlalchemy[asyncio]",
     "asyncpg",
     "alembic",

@@ -1,8 +1,10 @@
 from typing import Sequence
 from uuid import UUID
+import asyncio
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.security import hash_password, verify_password
 from app.core.exceptions import UserNotFoundError
 from app.models import User
 from app.repositories.user import UserRepository
@@ -15,14 +17,32 @@ class UserService:
         self.repository = UserRepository(session)
 
     async def create_user(self, data: UserCreateData) -> User:
+        password_hash = await asyncio.to_thread(
+            hash_password,
+            data.password,
+        )
         try:
-            user = await self.repository.create(**data.model_dump())
+            user = await self.repository.create(
+                full_name=data.full_name,
+                password_hash=password_hash,
+            )
             await self.session.commit()
         except Exception:
             await self.session.rollback()
             raise
 
         return user
+
+    async def verify_user_password(
+        self,
+        user: User,
+        password: str,
+    ) -> bool:
+        return await asyncio.to_thread(
+            verify_password,
+            password,
+            user.password_hash,
+        )
 
     async def get_user(self, user_id: UUID) -> User:
         res = await self.repository.get_by_id(user_id=user_id)
