@@ -4,7 +4,7 @@ from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
 
-from app.api.routers.health import router as health_router
+from app.api.router import api_router
 from app.core.config import get_settings
 from app.core.logging import configure_logging
 from app.db.session import engine
@@ -37,4 +37,4 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-app.include_router(health_router)
+app.include_router(api_router)
