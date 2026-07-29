@@ -2,10 +2,10 @@ import uuid
 from datetime import datetime
 
 from sqlalchemy import (
-    Uuid,
-    String,
     Boolean,
     DateTime,
+    String,
+    Uuid,
     func,
     true,
 )

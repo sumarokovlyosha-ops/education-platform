@@ -1,11 +1,11 @@
-from typing import Sequence
-from uuid import UUID
 import asyncio
+from collections.abc import Sequence
+from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.security import hash_password, verify_password
 from app.core.exceptions import UserNotFoundError
+from app.core.security import hash_password, verify_password
 from app.models import User
 from app.repositories.user import UserRepository
 from app.schemas.user import UserCreateData

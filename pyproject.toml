@@ -12,6 +12,7 @@ dependencies = [
     "uvicorn[standard]",
     "pydantic-settings",
     "pwdlib[argon2]",
+    "PyJWT",
     "sqlalchemy[asyncio]",
     "asyncpg",
     "alembic",

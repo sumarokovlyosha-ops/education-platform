@@ -10,7 +10,6 @@ from sqlalchemy.ext.asyncio import (
 
 from app.core.config import get_database_settings
 
-
 database_settings = get_database_settings()
 
 database_url = URL.create(

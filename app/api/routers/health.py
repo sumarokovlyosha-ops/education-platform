@@ -9,7 +9,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.db.session import get_session
 from app.schemas.health import HealthResponse
 
-
 router = APIRouter(
     prefix="/health",
     tags=["Health"],
