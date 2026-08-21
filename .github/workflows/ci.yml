@@ -9,13 +9,12 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      env:
-        POSTGRES_USER: postgres
-        POSTGRES_PASSWORD: postgres
-        POSTGRES_DB: education_platform_test
-        POSTGRES_HOST: localhost
-        POSTGRES_PORT: 5432
-        JWT_SECRET_KEY: test-secret-key-for-ci-only-123456789
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: education_platform_test
+      POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5432
+      JWT_SECRET_KEY: test-secret-key-for-ci-only-123456789
 
     services:
       postgres:
