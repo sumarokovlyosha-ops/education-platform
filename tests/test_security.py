@@ -13,6 +13,8 @@ from app.schemas import TokenResponse
 TEST_SECRET = "test-secret-key-that-is-longer-than-32-characters"
 
 
+pytestmark = pytest.mark.unit
+
 @pytest.fixture(autouse=True)
 def configure_jwt(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
     monkeypatch.setenv("JWT_SECRET_KEY", TEST_SECRET)

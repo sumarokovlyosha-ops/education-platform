@@ -78,3 +78,17 @@ async def client(db_session: AsyncSession) -> AsyncIterator[AsyncClient]:
     async with AsyncClient (transport=transport,base_url="http://test") as async_client:
         yield async_client
     app.dependency_overrides.clear()
+
+
+@pytest_asyncio.fixture
+async def created_user(client: AsyncClient) -> dict:
+    response = await client.post(
+        "/auth/register",
+        json={
+            "full_name": "Created User",
+            "password": "password123",
+        }
+    )
+
+    assert response.status_code == 201
+    return response.json()
