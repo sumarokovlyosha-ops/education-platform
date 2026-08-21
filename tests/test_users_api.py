@@ -68,3 +68,12 @@ async def test_get_users_invalid_pagination(
     response = await client.get(f"/users{query}")
 
     assert response.status_code == 422
+
+
+async def test_get_users_from_empty_database(
+    client: AsyncClient,
+):
+    response = await client.get("/users")
+
+    assert response.status_code == 200
+    assert response.json() == []
