@@ -21,18 +21,15 @@ from app.db.base import Base
 if TYPE_CHECKING:
     from app.models.membership import Membership
 
-class User(Base):
-    __tablename__ = "users"
+class School(Base):
+    __tablename__ = "schools"
 
     id: Mapped[uuid.UUID] = mapped_column(
         Uuid,
         primary_key=True,
         default=uuid.uuid4,
     )
-    full_name: Mapped[str] = mapped_column(
-        String(255),
-    )
-    password_hash: Mapped[str] = mapped_column(
+    name: Mapped[str] = mapped_column(
         String(255),
     )
     is_active: Mapped[bool] = mapped_column(
@@ -50,5 +47,5 @@ class User(Base):
     )
 
     memberships: Mapped[list["Membership"]] = relationship(
-        back_populates="user",
+        back_populates="school",
     )
