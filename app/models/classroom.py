@@ -5,33 +5,38 @@ from typing import TYPE_CHECKING
 from sqlalchemy import (
     Boolean,
     DateTime,
+    ForeignKey,
     String,
+    UniqueConstraint,
     Uuid,
     func,
     true,
 )
-from sqlalchemy.orm import (
-    Mapped,
-    mapped_column,
-    relationship,
-)
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.base import Base
 
 if TYPE_CHECKING:
-    from app.models.classroom import Classroom
-    from app.models.membership import Membership
+    from app.models.school import School
 
-class School(Base):
-    __tablename__ = "schools"
+
+class Classroom(Base):
+    __tablename__ = "classrooms"
 
     id: Mapped[uuid.UUID] = mapped_column(
         Uuid,
         primary_key=True,
         default=uuid.uuid4,
     )
+    school_id: Mapped[uuid.UUID] = mapped_column(
+        Uuid,
+        ForeignKey("schools.id"),
+    )
     name: Mapped[str] = mapped_column(
-        String(255),
+        String(50),
+    )
+    academic_year: Mapped[str] = mapped_column(
+        String(9),
     )
     is_active: Mapped[bool] = mapped_column(
         Boolean,
@@ -47,10 +52,15 @@ class School(Base):
         onupdate=func.now(),
     )
 
-    memberships: Mapped[list["Membership"]] = relationship(
-        back_populates="school",
+    school: Mapped["School"] = relationship(
+        back_populates="classrooms",
     )
 
-    classrooms: Mapped[list["Classroom"]] = relationship(
-        back_populates="school",
+    __table_args__ = (
+        UniqueConstraint(
+            "school_id",
+            "name",
+            "academic_year",
+            name="uq_classrooms_school_name_academic_year",
+        ),
     )
