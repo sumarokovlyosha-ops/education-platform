@@ -7,6 +7,7 @@ from fastapi import FastAPI
 from app.api.router import api_router
 from app.core.config import get_settings
 from app.core.logging import configure_logging
+from app.db.redis import redis_client
 from app.db.session import engine
 
 settings = get_settings()
@@ -25,6 +26,7 @@ async def lifespan(
     try:
         yield
     finally:
+        await redis_client.aclose()
         await engine.dispose()
         logger.info("Stopping %s", settings.name)
 

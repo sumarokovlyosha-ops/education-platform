@@ -11,6 +11,7 @@ from sqlalchemy.ext.asyncio import (
 
 from app.core.config import get_database_settings
 from app.db.base import Base
+from app.db.redis import redis_client
 from app.db.session import get_session
 from app.main import app
 
@@ -45,6 +46,7 @@ async def prepare_database():
 
     async with test_engine.begin() as connection:
         await connection.run_sync(Base.metadata.drop_all)
+    await redis_client.aclose()
     await test_engine.dispose()
 
 

@@ -33,6 +33,22 @@ class DatabaseSettings(BaseSettings):
     )
 
 
+class RedisSettings(BaseSettings):
+    host: str = "localhost"
+    port: int = Field(default=6379, ge=1, le=65535)
+    db: int = Field(default=0, ge=0)
+    password: SecretStr | None = None
+    socket_connect_timeout: float = Field(default=2.0, gt=0)
+    socket_timeout: float = Field(default=2.0, gt=0)
+
+    model_config = SettingsConfigDict(
+        env_prefix="REDIS_",
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+
+
 class JWTSettings(BaseSettings):
     secret_key: SecretStr = Field(validation_alias="JWT_SECRET_KEY")
     algorithm: Literal["HS256"] = Field(
@@ -68,6 +84,11 @@ def get_settings() -> Settings:
 @lru_cache
 def get_database_settings() -> DatabaseSettings:
     return DatabaseSettings()  # pyright: ignore[reportCallIssue]
+
+
+@lru_cache
+def get_redis_settings() -> RedisSettings:
+    return RedisSettings()
 
 
 @lru_cache

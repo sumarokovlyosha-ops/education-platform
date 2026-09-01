@@ -14,6 +14,9 @@ jobs:
       POSTGRES_DB: education_platform_test
       POSTGRES_HOST: localhost
       POSTGRES_PORT: 5432
+      REDIS_HOST: localhost
+      REDIS_PORT: 6379
+      REDIS_DB: 0
       JWT_SECRET_KEY: test-secret-key-for-ci-only-123456789
 
     services:
@@ -30,6 +33,18 @@ jobs:
 
         options: >-
           --health-cmd="pg_isready -U postgres"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=5
+
+      redis:
+        image: redis:8-alpine
+
+        ports:
+          - 6379:6379
+
+        options: >-
+          --health-cmd="redis-cli ping"
           --health-interval=5s
           --health-timeout=5s
           --health-retries=5

@@ -121,6 +121,10 @@ POSTGRES_PASSWORD=change_me
 POSTGRES_DB=education_platform
 POSTGRES_HOST=localhost
 POSTGRES_PORT=5433
+
+REDIS_HOST=localhost
+REDIS_PORT=6379
+REDIS_DB=0
 ```
 
 Настоящий файл `.env` не должен попадать в Git.
@@ -131,16 +135,28 @@ POSTGRES_PORT=5433
 POSTGRES_PORT=5432
 ```
 
-### 5. Запустить PostgreSQL
+### 5. Запустить PostgreSQL и Redis
 
 ```bash
-docker compose up -d postgres
+docker compose up -d postgres redis
 ```
 
 Проверить состояние контейнера:
 
 ```bash
 docker compose ps
+```
+
+Проверить Redis:
+
+```bash
+docker compose exec redis redis-cli ping
+```
+
+Успешный ответ:
+
+```text
+PONG
 ```
 
 ### 6. Запустить API
@@ -175,7 +191,7 @@ http://127.0.0.1:8000/redoc
 curl http://127.0.0.1:8000/health/live
 ```
 
-Проверить соединение приложения с PostgreSQL:
+Проверить соединение приложения с PostgreSQL и Redis:
 
 ```bash
 curl http://127.0.0.1:8000/health/ready
