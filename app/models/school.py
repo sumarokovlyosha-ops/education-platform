@@ -22,6 +22,7 @@ if TYPE_CHECKING:
     from app.models.classroom import Classroom
     from app.models.membership import Membership
 
+
 class School(Base):
     __tablename__ = "schools"
 

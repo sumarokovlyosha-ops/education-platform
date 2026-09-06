@@ -21,6 +21,7 @@ from app.db.base import Base
 if TYPE_CHECKING:
     from app.models.membership import Membership
 
+
 class User(Base):
     __tablename__ = "users"
 

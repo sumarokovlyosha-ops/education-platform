@@ -78,10 +78,7 @@ async def get_roles(
             detail="Membership not found",
         ) from error
 
-    return [
-        MembershipRoleRead.model_validate(role)
-        for role in orm_roles
-    ]
+    return [MembershipRoleRead.model_validate(role) for role in orm_roles]
 
 
 @router.delete(

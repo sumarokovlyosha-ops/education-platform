@@ -35,7 +35,6 @@ test_session_factory = async_sessionmaker(
 )
 
 
-
 @pytest_asyncio.fixture(scope="session", autouse=True)
 async def prepare_database():
     async with test_engine.begin() as connection:
@@ -56,7 +55,7 @@ async def db_session() -> AsyncIterator[AsyncSession]:
         transaction = await connection.begin()
 
         session = AsyncSession(
-            bind = connection,
+            bind=connection,
             expire_on_commit=False,
             join_transaction_mode="create_savepoint",
         )
@@ -77,7 +76,7 @@ async def client(db_session: AsyncSession) -> AsyncIterator[AsyncClient]:
 
     transport = ASGITransport(app=app)
 
-    async with AsyncClient (transport=transport,base_url="http://test") as async_client:
+    async with AsyncClient(transport=transport, base_url="http://test") as async_client:
         yield async_client
     app.dependency_overrides.clear()
 
@@ -89,7 +88,7 @@ async def created_user(client: AsyncClient) -> dict:
         json={
             "full_name": "Created User",
             "password": "password123",
-        }
+        },
     )
 
     assert response.status_code == 201

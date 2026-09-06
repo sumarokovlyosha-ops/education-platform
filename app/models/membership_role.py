@@ -22,19 +22,14 @@ class MembershipRole(Base):
     __tablename__ = "membership_roles"
 
     membership_id: Mapped[uuid.UUID] = mapped_column(
-        ForeignKey(
-            "memberships.id",
-            ondelete="CASCADE"
-        ),
+        ForeignKey("memberships.id", ondelete="CASCADE"),
         primary_key=True,
     )
     role: Mapped[MembershipRoleType] = mapped_column(
         Enum(
             MembershipRoleType,
             name="membership_role_type",
-            values_callable=lambda enum_cls: [
-                member.value for member in enum_cls
-            ],
+            values_callable=lambda enum_cls: [member.value for member in enum_cls],
         ),
         primary_key=True,
     )
@@ -42,4 +37,3 @@ class MembershipRole(Base):
     membership: Mapped["Membership"] = relationship(
         back_populates="roles",
     )
-

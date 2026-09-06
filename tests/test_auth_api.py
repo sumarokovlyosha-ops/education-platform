@@ -7,16 +7,17 @@ from app.models import User
 
 pytestmark = pytest.mark.integration
 
+
 async def test_register_user(
-        client: AsyncClient,
-        db_session: AsyncSession,
+    client: AsyncClient,
+    db_session: AsyncSession,
 ):
     response = await client.post(
         "/auth/register",
         json={
             "full_name": "Alex Test",
             "password": "password123",
-        }
+        },
     )
 
     assert response.status_code == 201
@@ -29,14 +30,11 @@ async def test_register_user(
     assert "password" not in data
     assert "password_hash" not in data
 
-    result = await db_session.execute(
-        select(User).where(User.full_name == "Alex Test")
-    )
+    result = await db_session.execute(select(User).where(User.full_name == "Alex Test"))
     user = result.scalar_one()
 
     assert user.full_name == "Alex Test"
     assert user.password_hash != "password123"
-
 
 
 @pytest.mark.parametrize(

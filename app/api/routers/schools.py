@@ -51,10 +51,7 @@ async def get_schools(
         offset=offset,
     )
 
-    return [
-        SchoolRead.model_validate(school)
-        for school in orm_schools
-    ]
+    return [SchoolRead.model_validate(school) for school in orm_schools]
 
 
 @router.get(
@@ -142,7 +139,4 @@ async def get_school_memberships(
             detail="School not found",
         ) from error
 
-    return [
-        MembershipRead.model_validate(membership)
-        for membership in orm_memberships
-    ]
+    return [MembershipRead.model_validate(membership) for membership in orm_memberships]

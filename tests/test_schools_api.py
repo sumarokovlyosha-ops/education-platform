@@ -35,9 +35,7 @@ async def test_get_school_by_id(
 
     school_id = create_response.json()["id"]
 
-    response = await client.get(
-        f"/schools/{school_id}"
-    )
+    response = await client.get(f"/schools/{school_id}")
 
     assert response.status_code == 200
 
@@ -51,9 +49,7 @@ async def test_get_school_by_id(
 async def test_get_unknown_school_returns_404(
     client: AsyncClient,
 ):
-    response = await client.get(
-        f"/schools/{uuid4()}"
-    )
+    response = await client.get(f"/schools/{uuid4()}")
 
     assert response.status_code == 404
 
@@ -98,9 +94,7 @@ async def test_get_schools_invalid_pagination(
     client: AsyncClient,
     query: str,
 ):
-    response = await client.get(
-        f"/schools{query}"
-    )
+    response = await client.get(f"/schools{query}")
 
     assert response.status_code == 422
 

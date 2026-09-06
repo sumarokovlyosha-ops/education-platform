@@ -26,9 +26,7 @@ async def test_get_user_by_id(
 async def test_get_unknown_user_returns_404(
     client: AsyncClient,
 ):
-    response = await client.get(
-        f"/users/{uuid4()}"
-    )
+    response = await client.get(f"/users/{uuid4()}")
 
     assert response.status_code == 404
 

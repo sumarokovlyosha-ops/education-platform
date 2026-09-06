@@ -111,9 +111,7 @@ async def test_get_school_memberships(
         user_id=created_user["id"],
     )
 
-    response = await client.get(
-        f"/schools/{school['id']}/memberships"
-    )
+    response = await client.get(f"/schools/{school['id']}/memberships")
 
     assert response.status_code == 200
 
@@ -122,6 +120,7 @@ async def test_get_school_memberships(
     assert len(data) == 1
     assert data[0]["id"] == membership["id"]
     assert data[0]["user_id"] == created_user["id"]
+
 
 async def test_add_role_to_membership(
     client: AsyncClient,
@@ -198,16 +197,11 @@ async def test_membership_can_have_multiple_roles(
     assert first_response.status_code == 201
     assert second_response.status_code == 201
 
-    response = await client.get(
-        f"/memberships/{membership['id']}/roles"
-    )
+    response = await client.get(f"/memberships/{membership['id']}/roles")
 
     assert response.status_code == 200
 
-    roles = {
-        role["role"]
-        for role in response.json()
-    }
+    roles = {role["role"] for role in response.json()}
 
     assert roles == {
         "teacher",
@@ -243,16 +237,11 @@ async def test_remove_one_role_keeps_other_roles(
 
     assert delete_response.status_code == 204
 
-    response = await client.get(
-        f"/memberships/{membership['id']}/roles"
-    )
+    response = await client.get(f"/memberships/{membership['id']}/roles")
 
     assert response.status_code == 200
 
-    roles = [
-        role["role"]
-        for role in response.json()
-    ]
+    roles = [role["role"] for role in response.json()]
 
     assert roles == ["schedule_manager"]
 
