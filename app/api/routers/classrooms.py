@@ -2,8 +2,11 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.cache.classroom import ClassroomCache
+from app.db.redis import get_redis
 from app.db.session import get_session
 from app.schemas.classroom import ClassroomCreate, ClassroomRead
 from app.services.classroom import (
@@ -25,8 +28,12 @@ async def create_classroom(
     school_id: UUID,
     data: ClassroomCreate,
     session: Annotated[AsyncSession, Depends(get_session)],
+    redis: Annotated[Redis, Depends(get_redis)],
 ) -> ClassroomRead:
-    classroom_service = ClassroomService(session=session)
+    classroom_service = ClassroomService(
+        session=session,
+        cache=ClassroomCache(redis),
+    )
 
     try:
         orm_classroom = await classroom_service.create_classroom(
@@ -55,13 +62,17 @@ async def create_classroom(
 async def get_school_classrooms(
     school_id: UUID,
     session: Annotated[AsyncSession, Depends(get_session)],
+    redis: Annotated[Redis, Depends(get_redis)],
     limit: Annotated[int, Query(ge=1, le=100)] = 10,
     offset: Annotated[int, Query(ge=0)] = 0,
 ) -> list[ClassroomRead]:
-    classroom_service = ClassroomService(session=session)
+    classroom_service = ClassroomService(
+        session=session,
+        cache=ClassroomCache(redis),
+    )
 
     try:
-        orm_classrooms = await classroom_service.list_school_classrooms(
+        classrooms = await classroom_service.list_school_classrooms(
             school_id=school_id,
             limit=limit,
             offset=offset,
@@ -72,7 +83,7 @@ async def get_school_classrooms(
             detail="School not found",
         ) from error
 
-    return [ClassroomRead.model_validate(classroom) for classroom in orm_classrooms]
+    return classrooms
 
 
 @router.get(
@@ -83,8 +94,12 @@ async def get_school_classrooms(
 async def get_classroom(
     classroom_id: UUID,
     session: Annotated[AsyncSession, Depends(get_session)],
+    redis: Annotated[Redis, Depends(get_redis)],
 ) -> ClassroomRead:
-    classroom_service = ClassroomService(session=session)
+    classroom_service = ClassroomService(
+        session=session,
+        cache=ClassroomCache(redis),
+    )
 
     try:
         orm_classroom = await classroom_service.get_classroom(

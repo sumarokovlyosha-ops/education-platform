@@ -40,6 +40,7 @@ class RedisSettings(BaseSettings):
     password: SecretStr | None = None
     socket_connect_timeout: float = Field(default=2.0, gt=0)
     socket_timeout: float = Field(default=2.0, gt=0)
+    classroom_cache_ttl_seconds: int = Field(default=300, gt=0)
 
     model_config = SettingsConfigDict(
         env_prefix="REDIS_",

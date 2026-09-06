@@ -1,13 +1,13 @@
-from collections.abc import Sequence
 from uuid import UUID
 
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.cache.classroom import ClassroomCache
 from app.models.classroom import Classroom
 from app.repositories.classroom import ClassroomRepository
 from app.repositories.school import SchoolRepository
-from app.schemas.classroom import ClassroomCreate
+from app.schemas.classroom import ClassroomCreate, ClassroomRead
 
 
 class ClassroomNotFoundError(Exception):
@@ -23,8 +23,13 @@ class ClassroomSchoolNotFoundError(Exception):
 
 
 class ClassroomService:
-    def __init__(self, session: AsyncSession) -> None:
+    def __init__(
+        self,
+        session: AsyncSession,
+        cache: ClassroomCache,
+    ) -> None:
         self.session = session
+        self.cache = cache
         self.repository = ClassroomRepository(session)
         self.school_repository = SchoolRepository(session)
 
@@ -61,6 +66,8 @@ class ClassroomService:
             await self.session.rollback()
             raise ClassroomAlreadyExistsError from None
 
+        await self.cache.invalidate_school_classrooms(school_id)
+
         return classroom
 
     async def get_classroom(
@@ -81,7 +88,7 @@ class ClassroomService:
         school_id: UUID,
         limit: int,
         offset: int,
-    ) -> Sequence[Classroom]:
+    ) -> list[ClassroomRead]:
         school = await self.school_repository.get_by_id(
             school_id=school_id,
         )
@@ -89,8 +96,32 @@ class ClassroomService:
         if school is None:
             raise ClassroomSchoolNotFoundError
 
-        return await self.repository.list_by_school(
+        cache_result = await self.cache.get_school_classrooms(
             school_id=school_id,
             limit=limit,
             offset=offset,
         )
+
+        if cache_result.classrooms is not None:
+            return cache_result.classrooms
+
+        orm_classrooms = await self.repository.list_by_school(
+            school_id=school_id,
+            limit=limit,
+            offset=offset,
+        )
+
+        classrooms = [
+            ClassroomRead.model_validate(classroom) for classroom in orm_classrooms
+        ]
+
+        if cache_result.generation is not None:
+            await self.cache.set_school_classrooms(
+                school_id=school_id,
+                generation=cache_result.generation,
+                limit=limit,
+                offset=offset,
+                classrooms=classrooms,
+            )
+
+        return classrooms
