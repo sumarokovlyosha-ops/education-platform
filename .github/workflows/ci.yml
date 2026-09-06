@@ -64,6 +64,9 @@ jobs:
       - name: Ruff
         run: ruff check .
 
+      - name: Ruff format
+        run: ruff format --check .
+
       - name: Pyright
         run: pyright
 
