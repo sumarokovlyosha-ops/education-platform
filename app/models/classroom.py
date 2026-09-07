@@ -17,6 +17,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 
 if TYPE_CHECKING:
+    from app.models.classroom_member import ClassroomMember
     from app.models.school import School
 
 
@@ -54,6 +55,12 @@ class Classroom(Base):
 
     school: Mapped["School"] = relationship(
         back_populates="classrooms",
+    )
+
+    members: Mapped[list["ClassroomMember"]] = relationship(
+        back_populates="classroom",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
     )
 
     __table_args__ = (

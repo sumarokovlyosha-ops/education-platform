@@ -20,6 +20,7 @@ from sqlalchemy.orm import (
 from app.db.base import Base
 
 if TYPE_CHECKING:
+    from app.models.classroom_member import ClassroomMember
     from app.models.membership_role import MembershipRole
     from app.models.school import School
     from app.models.user import User
@@ -71,6 +72,12 @@ class Membership(Base):
     )
 
     roles: Mapped[list["MembershipRole"]] = relationship(
+        back_populates="membership",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
+
+    classroom_members: Mapped[list["ClassroomMember"]] = relationship(
         back_populates="membership",
         cascade="all, delete-orphan",
         passive_deletes=True,
