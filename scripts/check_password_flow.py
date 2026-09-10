@@ -1,4 +1,5 @@
 import asyncio
+from uuid import uuid4
 
 from app.db.session import async_session_factory
 from app.schemas import UserCreateData, UserRead
@@ -11,9 +12,12 @@ async def main() -> None:
     async with async_session_factory() as session:
         service = UserService(session)
 
-        data = UserCreateData(
-            full_name="Тестовый Пользователь",
-            password=password,
+        data = UserCreateData.model_validate(
+            {
+                "full_name": "Тестовый Пользователь",
+                "email": f"password-check-{uuid4()}@example.com",
+                "password": password,
+            }
         )
 
         user = await service.create_user(data)

@@ -11,9 +11,17 @@ class UserRepository:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
-    async def create(self, full_name: str, password_hash: str) -> User:
-
-        user = User(full_name=full_name, password_hash=password_hash)
+    async def create(
+        self,
+        full_name: str,
+        email: str,
+        password_hash: str,
+    ) -> User:
+        user = User(
+            full_name=full_name,
+            email=email,
+            password_hash=password_hash,
+        )
 
         self.session.add(user)
 
@@ -22,12 +30,22 @@ class UserRepository:
 
         return user
 
+    async def get_by_email(
+        self,
+        email: str,
+    ) -> User | None:
+        statement = select(User).where(User.email == email)
+        result = await self.session.execute(statement)
+
+        return result.scalar_one_or_none()
+
     async def get_by_id(
         self,
         user_id: UUID,
     ) -> User | None:
         statement = select(User).where(User.id == user_id)
         res = await self.session.execute(statement)
+
         return res.scalar_one_or_none()
 
     async def list_of_users(
@@ -39,4 +57,5 @@ class UserRepository:
             select(User).order_by(User.created_at.desc()).limit(limit).offset(offset)
         )
         res = await self.session.execute(statement)
+
         return res.scalars().all()

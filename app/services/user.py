@@ -2,6 +2,7 @@ import asyncio
 from collections.abc import Sequence
 from uuid import UUID
 
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.exceptions import UserNotFoundError
@@ -11,22 +12,39 @@ from app.repositories.user import UserRepository
 from app.schemas.user import UserCreateData
 
 
+class UserAlreadyExistsError(Exception):
+    pass
+
+
 class UserService:
     def __init__(self, session: AsyncSession) -> None:
         self.session = session
         self.repository = UserRepository(session)
 
     async def create_user(self, data: UserCreateData) -> User:
+        normalized_email = str(data.email).lower()
+        existing_user = await self.repository.get_by_email(
+            email=normalized_email,
+        )
+
+        if existing_user is not None:
+            raise UserAlreadyExistsError
+
         password_hash = await asyncio.to_thread(
             hash_password,
             data.password,
         )
+
         try:
             user = await self.repository.create(
                 full_name=data.full_name,
+                email=normalized_email,
                 password_hash=password_hash,
             )
             await self.session.commit()
+        except IntegrityError:
+            await self.session.rollback()
+            raise UserAlreadyExistsError from None
         except Exception:
             await self.session.rollback()
             raise
@@ -46,8 +64,10 @@ class UserService:
 
     async def get_user(self, user_id: UUID) -> User:
         res = await self.repository.get_by_id(user_id=user_id)
+
         if res is None:
             raise UserNotFoundError(user_id=user_id)
+
         return res
 
     async def list_of_users(
