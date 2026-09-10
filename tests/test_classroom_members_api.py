@@ -13,11 +13,13 @@ pytestmark = pytest.mark.integration
 async def create_user(
     client: AsyncClient,
     full_name: str,
+    email: str,
 ) -> dict:
     response = await client.post(
         "/auth/register",
         json={
             "full_name": full_name,
+            "email": email,
             "password": "password123",
         },
     )
@@ -309,7 +311,11 @@ async def test_list_classroom_members(
     client: AsyncClient,
     created_user: dict,
 ) -> None:
-    second_user = await create_user(client, full_name="Second Member")
+    second_user = await create_user(
+        client,
+        full_name="Second Member",
+        email="second.member@example.com",
+    )
     school = await create_school(client, name="Member List School")
     classroom = await create_classroom(client, school_id=school["id"])
 

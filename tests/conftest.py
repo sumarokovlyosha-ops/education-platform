@@ -87,6 +87,7 @@ async def created_user(client: AsyncClient) -> dict:
         "/auth/register",
         json={
             "full_name": "Created User",
+            "email": "created.user@example.com",
             "password": "password123",
         },
     )

@@ -17,6 +17,7 @@ pytestmark = pytest.mark.integration
 async def create_dependencies(session: AsyncSession) -> tuple[Classroom, Membership]:
     user = User(
         full_name="Classroom Member",
+        email="classroom.member@example.com",
         password_hash="not-used-in-this-test",
     )
     school = School(name="Classroom Member School")
