@@ -444,9 +444,7 @@ async def test_cannot_remove_membership_role_used_in_classroom(
     )
 
     assert response.status_code == 409
-    assert response.json()["detail"] == (
-        "Role is used by a classroom membership"
-    )
+    assert response.json()["detail"] == ("Role is used by a classroom membership")
 
 
 async def test_invalid_classroom_role_returns_422(
