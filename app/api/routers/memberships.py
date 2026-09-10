@@ -12,6 +12,7 @@ from app.schemas.membership_role import (
 )
 from app.services.membership_role import (
     MembershipRoleAlreadyExistsError,
+    MembershipRoleInUseError,
     MembershipRoleNotFoundError,
     MembershipRoleService,
     RoleMembershipNotFoundError,
@@ -102,4 +103,10 @@ async def remove_role(
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Role not found",
+        ) from error
+
+    except MembershipRoleInUseError as error:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Role is used by a classroom membership",
         ) from error

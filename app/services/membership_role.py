@@ -4,10 +4,12 @@ from uuid import UUID
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.models.classroom_member import ClassroomMemberRoleType
 from app.models.membership_role import (
     MembershipRole,
     MembershipRoleType,
 )
+from app.repositories.classroom_member import ClassroomMemberRepository
 from app.repositories.membership import MembershipRepository
 from app.repositories.membership_role import MembershipRoleRepository
 
@@ -17,6 +19,10 @@ class MembershipRoleAlreadyExistsError(Exception):
 
 
 class MembershipRoleNotFoundError(Exception):
+    pass
+
+
+class MembershipRoleInUseError(Exception):
     pass
 
 
@@ -30,6 +36,7 @@ class MembershipRoleService:
 
         self.repository = MembershipRoleRepository(session)
         self.membership_repository = MembershipRepository(session)
+        self.classroom_member_repository = ClassroomMemberRepository(session)
 
     async def add_role(
         self,
@@ -77,6 +84,16 @@ class MembershipRoleService:
 
         if membership_role is None:
             raise MembershipRoleNotFoundError
+
+        if role in {MembershipRoleType.STUDENT, MembershipRoleType.TEACHER}:
+            classroom_role = ClassroomMemberRoleType(role.value)
+            role_is_used = await self.classroom_member_repository.role_is_used(
+                membership_id=membership_id,
+                role=classroom_role,
+            )
+
+            if role_is_used:
+                raise MembershipRoleInUseError
 
         await self.repository.delete(membership_role)
         await self.session.commit()
