@@ -7,7 +7,12 @@ import pytest
 
 from app.core.config import get_jwt_settings
 from app.core.exceptions import AccessTokenError
-from app.core.security import create_access_token, decode_access_token
+from app.core.security import (
+    create_access_token,
+    decode_access_token,
+    make_unusable_password_hash,
+    verify_password,
+)
 from app.schemas import TokenResponse
 
 TEST_SECRET = "test-secret-key-that-is-longer-than-32-characters"
@@ -88,3 +93,12 @@ def test_token_response_uses_bearer_by_default() -> None:
     response = TokenResponse(access_token="encoded-token")
 
     assert response.token_type == "bearer"
+
+
+def test_unusable_password_hash_never_accepts_password() -> None:
+    first_hash = make_unusable_password_hash()
+    second_hash = make_unusable_password_hash()
+
+    assert first_hash.startswith("!")
+    assert first_hash != second_hash
+    assert verify_password("any-password", first_hash) is False

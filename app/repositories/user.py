@@ -16,11 +16,13 @@ class UserRepository:
         full_name: str,
         email: str,
         password_hash: str,
+        is_active: bool = True,
     ) -> User:
         user = User(
             full_name=full_name,
             email=email,
             password_hash=password_hash,
+            is_active=is_active,
         )
 
         self.session.add(user)

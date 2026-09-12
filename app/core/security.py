@@ -1,4 +1,5 @@
 from datetime import UTC, datetime, timedelta
+from secrets import token_urlsafe
 from uuid import UUID
 
 import jwt
@@ -8,16 +9,24 @@ from app.core.config import get_jwt_settings
 from app.core.exceptions import AccessTokenError
 
 _password_hasher = PasswordHash.recommended()
+_UNUSABLE_PASSWORD_PREFIX = "!"
 
 
 def hash_password(password: str) -> str:
     return _password_hasher.hash(password)
 
 
+def make_unusable_password_hash() -> str:
+    return f"{_UNUSABLE_PASSWORD_PREFIX}{token_urlsafe(32)}"
+
+
 def verify_password(
     password: str,
     password_hash: str,
 ) -> bool:
+    if password_hash.startswith(_UNUSABLE_PASSWORD_PREFIX):
+        return False
+
     return _password_hasher.verify(
         password,
         password_hash,
