@@ -2,6 +2,7 @@ from fastapi import APIRouter
 
 from app.api.routers import (
     auth,
+    classroom_imports,
     classroom_members,
     classrooms,
     health,
@@ -19,3 +20,4 @@ api_router.include_router(schools.router)
 api_router.include_router(memberships.router)
 api_router.include_router(classrooms.router)
 api_router.include_router(classroom_members.router)
+api_router.include_router(classroom_imports.router)

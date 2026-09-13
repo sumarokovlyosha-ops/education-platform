@@ -12,6 +12,8 @@ dependencies = [
     "uvicorn[standard]",
     "pydantic[email]",
     "pydantic-settings",
+    "openpyxl",
+    "python-multipart",
     "pwdlib[argon2]",
     "PyJWT",
     "sqlalchemy[asyncio]",
