@@ -50,6 +50,19 @@ class RedisSettings(BaseSettings):
     )
 
 
+class CelerySettings(BaseSettings):
+    broker_url: SecretStr = SecretStr("redis://localhost:6379/1")
+    result_backend: SecretStr = SecretStr("redis://localhost:6379/2")
+    result_expires: int = Field(default=3600, gt=0)
+
+    model_config = SettingsConfigDict(
+        env_prefix="CELERY_",
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
+
+
 class JWTSettings(BaseSettings):
     secret_key: SecretStr = Field(validation_alias="JWT_SECRET_KEY")
     algorithm: Literal["HS256"] = Field(
@@ -90,6 +103,11 @@ def get_database_settings() -> DatabaseSettings:
 @lru_cache
 def get_redis_settings() -> RedisSettings:
     return RedisSettings()
+
+
+@lru_cache
+def get_celery_settings() -> CelerySettings:
+    return CelerySettings()
 
 
 @lru_cache
